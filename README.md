@@ -9,7 +9,13 @@ A universal BepInEx plugin that gives Unity games the ability to load and execut
 
 ---
 
-## Licensing & Credits
+## 🚀 Usage guide
+
+1. Clone the repo and build it using `dotnet publish -c Release -r win-x64`.
+2. Copy `KeraLua.dll, lua54.dll, LuaLoader.dll, NLua.dll` from `LuaLoader/build/bin/Release/netstandard2.1/win-x64/` to `GameRoot/BepInEx/plugins/LuaLoader/`.
+3. Copy the `Lua` folder to `GameRoot/`.
+
+## 📜 Licensing & Credits
 
 > [!IMPORTANT]
 > This project is open-source and licensed under the **GNU GPL v3** license.
