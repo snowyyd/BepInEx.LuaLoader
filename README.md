@@ -1,21 +1,22 @@
-# Lua Loader
+# BepInEx's Lua Loader
 
-Universal MelonLoader MOD, give MelonLoader ability to loading Lua language
+A universal BepInEx plugin that gives Unity games the ability to load and execute scripts written in the Lua language (powered by NLua).
 
-Press F10 to switch lua console by default
+> [!WARNING]
+> **Work In Progress (WIP):** This project is currently under active development. Features are being ported, and stability fixes for Lua 5.4 compatibility are ongoing. Expect bugs and potential crashes.
 
-The loader will loading all lua files in 'autorun' directory
+*This project is a port and continuation based on the [original MelonLoader mod](https://github.com/Fukashiro-Yukari/LuaLoader) by Fukashiro-Yukari.*
 
-[Example](https://github.com/Fukashiro-Yukari/LuaLoader/tree/master/example)
+---
 
-## Default lua console command
+## Licensing & Credits
 
-* lua - Run lua string
-* lua_reload - Reload lua
+> [!IMPORTANT]
+> This project is open-source and licensed under the **GNU GPL v3** license.
 
-### Licensing
+This project contains code, implementations, and core logic from the following repositories:
 
-This project uses code from:
-
-* (GPL) [Sinai](https://github.com/sinai-dev)'s [UnityExplorer](https://github.com/sinai-dev/UnityExplorer), I used the code of Input Manager and Force Unlock Cursor, and the code of Config
-* (MIT) [Lua](https://www.lua.org/license.html), Contains most of the backwards compatibility (5.4-5.1) and have some garry's mod like stuff.
+- **[LuaLoader](https://github.com/Fukashiro-Yukari/LuaLoader)** (GPL-3.0) - The baseline implementation originally designed for MelonLoader by Fukashiro-Yukari.
+- **[UnityExplorer](https://github.com/sinai-dev/UnityExplorer)** (GPL-3.0) - Developed by Sinai. We utilize core implementations from their Input Manager, Force Unlock Cursor logic, and Config framework.
+- **[NLua](https://github.com/nlua/NLua)** (MIT) - The bridging framework between the .NET CLR and the Lua Runtime.
+- **[Lua](https://www.lua.org/license.html)** (MIT) - The underlying scripting language environment.
