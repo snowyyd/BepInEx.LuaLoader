@@ -56,7 +56,7 @@ public class ForceUnlockCursor
 		}
 		catch (Exception e)
 		{
-			LuaLoader.Instance?.Logger.LogWarning($"Exception on CursorControl.Init! {e.GetType()}, {e.Message}");
+			LuaLoader.Instance?.Logger.LogWarning($"Exception on CursorControl.Init: {e.GetType()}, {e.Message}");
 		}
 
 		Unlock = true;
@@ -122,7 +122,7 @@ public class ForceUnlockCursor
 		}
 		catch (Exception e)
 		{
-			LuaLoader.Instance?.Logger.LogError($"Exception setting Cursor state: {e.GetType()}, {e.Message}");
+			LuaLoader.Instance?.Logger.LogError($"Exception while setting Cursor state: {e.GetType()}, {e.Message}");
 		}
 	}
 

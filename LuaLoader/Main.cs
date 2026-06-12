@@ -53,10 +53,10 @@ public class LuaLoader : BaseUnityPlugin
 		} */
 
 		InputManager.Init();
-		Instance?.Logger.LogInfo("Initializing lua environment...");
+		Instance?.Logger.LogInfo("Initializing the lua environment...");
 		this.InitializationLua();
 		LoadingLua();
-		Instance?.Logger.LogInfo("Lua environment has been initialized!");
+		Instance?.Logger.LogInfo("The lua environment has been initialized!");
 	}
 
 	public void Awake()
@@ -150,7 +150,7 @@ public class LuaLoader : BaseUnityPlugin
 		Lua.State.Encoding = Encoding.UTF8;
 
 #if CPP
-			lua["CPP"] = true;
+		Lua["CPP"] = true;
 #endif
 
 		Lua.RegisterFunction("include", this.GetType().GetMethod(nameof(IncludeLuaFile)));
@@ -225,9 +225,9 @@ end
 
 	public static void ReloadLua()
 	{
-		Instance?.Logger.LogInfo("Lua environment is now reloading");
+		Instance?.Logger.LogInfo("The lua environment is being reloading");
 		LoadingLua(true);
-		Instance?.Logger.LogInfo("Lua environment has been reloaded!");
+		Instance?.Logger.LogInfo("The lua environment has been reloaded!");
 	}
 
 	public static object[]? IncludeLuaFile(string name, bool isunsafe = false)
@@ -248,7 +248,7 @@ end
 				name = "Lua/" + name;
 		}
 
-		Instance?.Logger.LogDebug($"Loading Lua File: {name}");
+		Instance?.Logger.LogDebug($"Loading Lua file: {name}");
 
 		try
 		{
