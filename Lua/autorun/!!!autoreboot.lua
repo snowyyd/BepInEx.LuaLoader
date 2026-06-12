@@ -45,8 +45,7 @@ function AutoReboot.AddPath(path)
         end
     end
 
-    Loader.CreateFileSystemWatcher(path,
-                                   {Changed = reloadlua, Renamed = reloadlua})
+    Loader.CreateFileSystemWatcher(path, { Changed = reloadlua, Renamed = reloadlua })
 end
 
 function AutoReboot.AddAutoCreateTablePath(path, table, callback)
@@ -71,7 +70,7 @@ if AutoReboot.UseOldVersion then
         AutoReboot.LoadList[path] = path
     end
 
-    hook.Add('OnUpdate', 'AutoReboot', function()
+    hook.Add('Update', 'AutoReboot', function()
         for k, v in pairs(AutoReboot.LoadList) do
             for k, v in pairs(Directory.GetFiles(v)) do
                 AutoReboot.Times[v] = File.GetLastWriteTime(v).Ticks

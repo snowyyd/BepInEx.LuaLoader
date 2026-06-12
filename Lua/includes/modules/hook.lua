@@ -7,7 +7,7 @@ local IsValid = IsValid
 local type = type
 local error = error
 
-module('hook')
+local hook = {}
 
 local hooks = {}
 
@@ -15,14 +15,14 @@ local hooks = {}
     Name: GetTable
     Desc: Returns a table of all hooks.
 -----------------------------------------------------------]]
-function GetTable() return hooks end
+function hook.GetTable() return hooks end
 
 --[[---------------------------------------------------------
     Name: Add
     Args: string hookName, any identifier, function func
     Desc: Add a hook to listen to the specified event.
 -----------------------------------------------------------]]
-function Add(event_name, name, func)
+function hook.Add(event_name, name, func)
     if not isstring(event_name) then
         error("bad argument #1 to 'Add' (string expected, got " ..
                   type(event_name) .. ")")
@@ -45,7 +45,7 @@ end
     Args: string hookName, identifier
     Desc: Removes the hook with the given indentifier.
 -----------------------------------------------------------]]
-function Remove(event_name, name)
+function hook.Remove(event_name, name)
     if not isstring(event_name) then
         error("bad argument #1 to 'Remove' (string expected, got " ..
                   type(event_name) .. ")")
@@ -61,7 +61,7 @@ end
     Args: string hookName, vararg args
     Desc: Calls hooks associated with the hook name.
 -----------------------------------------------------------]]
-function Call(name, ...)
+function hook.Call(name, ...)
     local tbl = hooks[name]
 
     if not tbl then return end
@@ -85,3 +85,5 @@ function Call(name, ...)
                w, x, y, z
     end
 end
+
+return hook

@@ -1,0 +1,24 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+
+# --------------------------------
+# .NET Diagnostic
+# --------------------------------
+dotnet_diagnostic.IDE0051.severity = none # Remove unused private member
+dotnet_diagnostic.CA2211.severity = none # Non-constant fields should not be visible
+dotnet_diagnostic.CA1822.severity = none # Mark members as static
+dotnet_diagnostic.CA1707.severity = none # Identifiers should not contain underscores
+
+[**/obj/**/*.cs]
+# BepInEx.PluginInfoProps uses CLRF
+dotnet_diagnostic.RCS0045.severity = none # Use linefeed as new line

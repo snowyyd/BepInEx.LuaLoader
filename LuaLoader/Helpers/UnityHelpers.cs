@@ -1,29 +1,23 @@
 ﻿using UnityEngine;
 
-namespace LuaLoader.Helpers
+namespace LuaLoader.Helpers;
+
+public static class UnityHelpers
 {
-    public class UnityHelpers
-    {
-        private static Camera m_mainCamera;
+	private static Camera? m_mainCamera;
 
-        public static Camera MainCamera
-        {
-            get
-            {
-                if (!m_mainCamera)
-                {
-                    m_mainCamera = Camera.main;
-                }
-                return m_mainCamera;
-            }
-        }
+	public static Camera MainCamera
+	{
+		get
+		{
+			if (!m_mainCamera)
+			{
+				m_mainCamera = Camera.main;
+			}
 
-        public static string ActiveSceneName
-        {
-            get
-            {
-                return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-            }
-        }
-    }
+			return m_mainCamera;
+		}
+	}
+
+	public static string ActiveSceneName => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 }

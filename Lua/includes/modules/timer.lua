@@ -4,13 +4,13 @@ local util = util
 local unpack = unpack
 local pairs = pairs
 
-module('timer', package.seeall)
+local timer = {}
 
 local simpletimer = {}
 local timers = {}
 local stoptimers = {}
 
-function Adjust(identifier, delay, repetitions, func, ...)
+function timer.Adjust(identifier, delay, repetitions, func, ...)
     if not timers[identifier] and not stoptimers[identifier] then
         return false
     end
@@ -30,11 +30,11 @@ function Adjust(identifier, delay, repetitions, func, ...)
     return true
 end
 
-function Create(identifier, delay, repetitions, func, ...)
+function timer.Create(identifier, delay, repetitions, func, ...)
     delay = tonumber(delay)
     repetitions = tonumber(repetitions)
 
-    Remove(identifier)
+    timer.Remove(identifier)
 
     timers[identifier] = {
         delay = Time.time + delay,
@@ -46,13 +46,13 @@ function Create(identifier, delay, repetitions, func, ...)
     }
 end
 
-function Exists(identifier)
+function timer.Exists(identifier)
     if timers[identifier] or stoptimers[identifier] then return true end
 
     return false
 end
 
-function Pause(identifier)
+function timer.Pause(identifier)
     if not timers[identifier] then return false end
 
     local t = timers[identifier]
@@ -63,14 +63,14 @@ function Pause(identifier)
     return true
 end
 
-function Remove(identifier)
+function timer.Remove(identifier)
     if not timers[identifier] and not stoptimers[identifier] then return end
 
     timers[identifier] = nil
     stoptimers[identifier] = nil
 end
 
-function RepsLeft(identifier)
+function timer.RepsLeft(identifier)
     if not timers[identifier] and not stoptimers[identifier] then return end
 
     local t = timers[identifier] or stoptimers[identifier]
@@ -78,7 +78,7 @@ function RepsLeft(identifier)
     return t.nowrepetitions
 end
 
-function Simple(delay, func, ...)
+function timer.Simple(delay, func, ...)
     delay = tonumber(delay)
 
     simpletimer[util.GetId()] = {
@@ -88,7 +88,7 @@ function Simple(delay, func, ...)
     }
 end
 
-function Start(identifier)
+function timer.Start(identifier)
     if not timers[identifier] and not stoptimers[identifier] then
         return false
     end
@@ -104,7 +104,7 @@ function Start(identifier)
     return true
 end
 
-function Stop(identifier)
+function timer.Stop(identifier)
     if not timers[identifier] then return false end
 
     stoptimers[identifier] = table.copy(timers[identifier])
@@ -117,7 +117,7 @@ function Stop(identifier)
     return true
 end
 
-function TimeLeft(identifier)
+function timer.TimeLeft(identifier)
     if not timers[identifier] and not stoptimers[identifier] then return end
 
     local t = timers[identifier] or stoptimers[identifier]
@@ -125,22 +125,22 @@ function TimeLeft(identifier)
     return t.delay - Time.time
 end
 
-function Toggle(identifier)
+function timer.Toggle(identifier)
     if not timers[identifier] and not stoptimers[identifier] then
         return false
     end
     if timers[identifier] then
-        Pause(identifier)
+        timer.Pause(identifier)
 
         return false
     end
 
-    UnPause(identifier)
+    timer.UnPause(identifier)
 
     return true
 end
 
-function UnPause(identifier)
+function timer.UnPause(identifier)
     if not stoptimers[identifier] then return false end
 
     timers[identifier] = table.copy(stoptimers[identifier])
@@ -149,7 +149,7 @@ function UnPause(identifier)
     return true
 end
 
-function OnUpdate()
+function timer.Update()
     for k, v in pairs(simpletimer) do
         if v.delay <= Time.time then
             v.func(unpack(v.args))
@@ -178,4 +178,6 @@ function OnUpdate()
     end
 end
 
-hook.Add('OnUpdate', 'timer', OnUpdate)
+hook.Add('Update', 'timer', timer.Update)
+
+return timer

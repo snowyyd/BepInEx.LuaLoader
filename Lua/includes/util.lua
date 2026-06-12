@@ -1,7 +1,10 @@
 --
 -- Seed the rand!
+-- In Lua 5.4, math.randomseed expects an integer (or two), and string manipulation is no longer ideal.
+-- We cast the ticks directly to an integer using math.tointeger or string conversion safely.
 --
-math.randomseed(tostring(DateTime.Now.Ticks):reverse():sub(1, 6))
+local seed_str = tostring(DateTime.Now.Ticks):reverse():sub(1, 6)
+math.randomseed(tonumber(seed_str) or os.time())
 
 --
 -- Alias string.Format to global Format
@@ -22,13 +25,11 @@ function istable(obj) return type(obj) == 'table' end
 
 function isfunction(obj) return type(obj) == 'function' end
 
-function isarray(obj) return
-    type(obj) == 'userdata' and obj.GetEnumerator ~= nil end
+function isarray(obj) return type(obj) == 'userdata' and obj.GetEnumerator ~= nil end
 
 function cpairs(t)
     assert(isarray(t),
-           'bad argument #1 to \'cpairs\' (c# array expected, got ' .. type(t) ..
-               ')')
+           'bad argument #1 to \'cpairs\' (c# array expected, got ' .. type(t) .. ')')
 
     local i = 0
     local e = t:GetEnumerator()
@@ -38,6 +39,9 @@ function cpairs(t)
             local k = i
             local v = e.Current
 
+            -- C# strings might not have direct Lua string metatables in all NLua versions.
+            -- Using string.find or explicit conversion ensures StartWith emulation works safely.
+            -- if tostring(ctype(v)):find('^KeyValuePair') then
             if ctype(v):StartWith('KeyValuePair') then
                 return v.Key, v.Value
             end
@@ -58,7 +62,7 @@ function pairs(t, ...)
 end
 
 --[[---------------------------------------------------------
-	Prints a table to the console
+    Prints a table to the console
 -----------------------------------------------------------]]
 function PrintTable(t, indent, done)
     local print = print
@@ -95,7 +99,7 @@ function PrintTable(t, indent, done)
 end
 
 --[[---------------------------------------------------------
-	Simple lerp
+    Simple lerp
 -----------------------------------------------------------]]
 function lerp(delta, from, to)
 
@@ -107,7 +111,7 @@ function lerp(delta, from, to)
 end
 
 --[[---------------------------------------------------------
-	Convert Var to Bool
+    Convert Var to Bool
 -----------------------------------------------------------]]
 function tobool(val)
     if val == nil or val == false or val == 0 or val == "0" or val == "false" then

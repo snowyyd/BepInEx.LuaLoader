@@ -114,8 +114,10 @@ hook.Add('OnGUI', 'LuaLoaderLog', function()
     if GUI.Button(Rect(x - 5, y, w - 10, h), 'Run Command') then runcommand() end
 end)
 
-hook.Add('OnUpdate', 'LuaLoaderLog', function()
-    if InputManager.GetKeyDown(Loader.GetConfig().ConsoleKey) then
+hook.Add('Update', 'LuaLoaderLog', function()
+    -- TODO: add GetConfig() again
+    -- if InputManager.GetKeyDown(Loader.GetConfig().ConsoleKey) then
+    if InputManager.GetKeyDown(KeyCode.F10) then
         LuaLoaderLog.__gui = not LuaLoaderLog.__gui
         LuaLoaderLog.__lasttextc = #LuaLoaderLog.__lasttexts
         Loader.ShowMouse = not Loader.ShowMouse

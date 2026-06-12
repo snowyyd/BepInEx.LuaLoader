@@ -19,7 +19,7 @@ end)
 
 -- Update hook
 
-hook.Add('OnUpdate','Example',function()
+hook.Add('Update','Example',function()
     -- If f1 is pressed, it will trigger
     if InputManager.GetKeyDown(KeyCode.F1) then
         -- Do something

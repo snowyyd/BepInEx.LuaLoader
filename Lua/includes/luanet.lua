@@ -18,6 +18,9 @@ if not luanet then require 'luanet' end
 
 local import_type, load_assembly = luanet.import_type, luanet.load_assembly
 
+-- Lua 5.2 Compatibility: unpack was moved to table.unpack
+local unpack = unpack or table.unpack
+
 local mt = {
     --- Lookup a previously unfound class and add it to our table
     __index = function(package, classname)
