@@ -17,7 +17,6 @@ tab_width = 4
 dotnet_diagnostic.IDE0051.severity = none # Remove unused private member
 dotnet_diagnostic.CA2211.severity = none # Non-constant fields should not be visible
 dotnet_diagnostic.CA1822.severity = none # Mark members as static
-dotnet_diagnostic.CA1707.severity = none # Identifiers should not contain underscores
 
 [**/obj/**/*.cs]
 # BepInEx.PluginInfoProps uses CLRF
