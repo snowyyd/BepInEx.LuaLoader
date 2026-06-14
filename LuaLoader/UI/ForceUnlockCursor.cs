@@ -56,7 +56,7 @@ public class ForceUnlockCursor
 		}
 		catch (Exception e)
 		{
-			LuaLoader.Instance?.Logger.LogWarning($"Exception on CursorControl.Init: {e.GetType()}, {e.Message}");
+			LuaLoader.Instance.Logger.LogWarning($"Exception on CursorControl.Init: {e.GetType()}, {e.Message}");
 		}
 
 		Unlock = true;
@@ -66,7 +66,7 @@ public class ForceUnlockCursor
 	{
 		try
 		{
-			var harmony = LuaLoader.Instance?.HarmonyInstance;
+			var harmony = LuaLoader.Instance.HarmonyInstance;
 			var prop = typeof(Cursor).GetProperty(property);
 
 			if (setter)
@@ -83,7 +83,7 @@ public class ForceUnlockCursor
 		catch (Exception e)
 		{
 			var s = setter ? "set_" : "get_";
-			LuaLoader.Instance?.Logger.LogWarning($"Unable to patch Cursor.{s}{property}: {e.Message}");
+			LuaLoader.Instance.Logger.LogWarning($"Unable to patch Cursor.{s}{property}: {e.Message}");
 		}
 	}
 
@@ -122,7 +122,7 @@ public class ForceUnlockCursor
 		}
 		catch (Exception e)
 		{
-			LuaLoader.Instance?.Logger.LogError($"Exception while setting Cursor state: {e.GetType()}, {e.Message}");
+			LuaLoader.Instance.Logger.LogError($"Exception while setting Cursor state: {e.GetType()}, {e.Message}");
 		}
 	}
 

@@ -82,7 +82,7 @@ public class InputSystem : IAbstractInput
 
 	public void Init()
 	{
-		LuaLoader.Instance?.Logger.LogInfo("Initializing new InputSystem support...");
+		LuaLoader.Instance.Logger.LogInfo("Initializing new InputSystem support...");
 
 		m_kbCurrentProp = TKeyboard.GetProperty("current");
 		m_kbIndexer = TKeyboard.GetProperty("Item", [TKey]);

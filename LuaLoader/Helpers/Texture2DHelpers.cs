@@ -28,7 +28,7 @@ public static class Texture2DHelpers
 			return m_encodeToPNGMethod = method;
 		}
 
-		LuaLoader.Instance?.Logger.LogError("Could not get any EncodeToPNG method!");
+		LuaLoader.Instance.Logger.LogError("Could not get any EncodeToPNG method!");
 		return null;
 	}
 #endif
@@ -91,7 +91,7 @@ public static class Texture2DHelpers
 		}
 		catch (Exception e)
 		{
-			LuaLoader.Instance?.Logger.LogError("Exception on ForceReadTexture: " + e);
+			LuaLoader.Instance.Logger.LogError("Exception on ForceReadTexture: " + e);
 			return default;
 		}
 	}
@@ -128,7 +128,7 @@ public static class Texture2DHelpers
 
 		if (data == null || data.Length < 1)
 		{
-			LuaLoader.Instance?.Logger.LogWarning("Could not get any data for the texture!");
+			LuaLoader.Instance.Logger.LogWarning("Could not get any data for the texture!");
 		}
 		else
 		{

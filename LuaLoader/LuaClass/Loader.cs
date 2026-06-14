@@ -4,12 +4,12 @@ namespace LuaLoader.LuaClass;
 
 internal static class Loader
 {
-	public static void LogFatal(object obj) => LuaLoader.Instance?.Logger.LogFatal(obj);
-	public static void LogError(object obj) => LuaLoader.Instance?.Logger.LogError(obj);
-	public static void LogWarning(object obj) => LuaLoader.Instance?.Logger.LogWarning(obj);
-	public static void LogMessage(object obj) => LuaLoader.Instance?.Logger.LogMessage(obj);
-	public static void LogInfo(object obj) => LuaLoader.Instance?.Logger.LogInfo(obj);
-	public static void LogDebug(object obj) => LuaLoader.Instance?.Logger.LogDebug(obj);
+	public static void LogFatal(object obj) => LuaLoader.Instance.Logger.LogFatal(obj);
+	public static void LogError(object obj) => LuaLoader.Instance.Logger.LogError(obj);
+	public static void LogWarning(object obj) => LuaLoader.Instance.Logger.LogWarning(obj);
+	public static void LogMessage(object obj) => LuaLoader.Instance.Logger.LogMessage(obj);
+	public static void LogInfo(object obj) => LuaLoader.Instance.Logger.LogInfo(obj);
+	public static void LogDebug(object obj) => LuaLoader.Instance.Logger.LogDebug(obj);
 
 	public static bool ShowMouse
 	{

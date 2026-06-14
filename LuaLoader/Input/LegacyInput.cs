@@ -27,7 +27,7 @@ public class LegacyInput : IAbstractInput
 
 	public void Init()
 	{
-		LuaLoader.Instance?.Logger.LogInfo("Initializing Legacy Input support...");
+		LuaLoader.Instance.Logger.LogInfo("Initializing Legacy Input support...");
 
 		m_mousePositionProp = TInput.GetProperty("mousePosition");
 		m_getKeyMethod = TInput.GetMethod("GetKey", [typeof(KeyCode)]);

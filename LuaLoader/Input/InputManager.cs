@@ -24,7 +24,7 @@ public static class InputManager
 
 		if (m_inputModule == null)
 		{
-			LuaLoader.Instance?.Logger.LogWarning("Could not find any Input module!");
+			LuaLoader.Instance.Logger.LogWarning("Could not find any Input module!");
 			m_inputModule = new NoInput();
 		}
 

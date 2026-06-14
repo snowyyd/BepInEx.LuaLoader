@@ -18,7 +18,7 @@ namespace LuaLoader;
 public class LuaLoader : BaseUnityPlugin
 {
 	public static NLua.Lua? Lua;
-	public static LuaLoader? Instance { get; private set; }
+	public static LuaLoader Instance { get; private set; } = null!;
 
 	public new ManualLogSource Logger => base.Logger;
 	public Harmony? HarmonyInstance;
@@ -44,19 +44,19 @@ public class LuaLoader : BaseUnityPlugin
 			}
 			catch (Exception e)
 			{
-				Instance?.Logger.LogWarning(e);
+				Instance.Logger.LogWarning(e);
 			}
 		}
 		else
 		{
-			Instance?.Logger.LogWarning("Assembly 'Mono.CSharp.dll' not found");
+			Instance.Logger.LogWarning("Assembly 'Mono.CSharp.dll' not found");
 		} */
 
 		InputManager.Init();
-		Instance?.Logger.LogInfo("Initializing the lua environment...");
+		Instance.Logger.LogInfo("Initializing the lua environment...");
 		this.InitializationLua();
 		LoadingLua();
-		Instance?.Logger.LogInfo("The lua environment has been initialized!");
+		Instance.Logger.LogInfo("The lua environment has been initialized!");
 	}
 
 	public void Awake()
@@ -144,7 +144,7 @@ public class LuaLoader : BaseUnityPlugin
 
 	public void InitializationLua()
 	{
-		Instance?.Logger.LogInfo($"dirpath: {dirpath}");
+		Instance.Logger.LogInfo($"dirpath: {dirpath}");
 
 		Lua = new NLua.Lua();
 		Lua.State.Encoding = Encoding.UTF8;
@@ -161,10 +161,10 @@ public class LuaLoader : BaseUnityPlugin
 		// TODO
 		// if (IsLoadMonoCSharp) Lua.RegisterFunction("Evaluator", this.GetType().GetMethod(nameof(CreateEvaluator)));
 
-		Instance?.Logger.LogDebug($"packagepath = {packagepath}");
+		Instance.Logger.LogDebug($"packagepath = {packagepath}");
 		Lua.DoString(packagepath);
 
-		Instance?.Logger.LogDebug($"cpackagepath = {cpackagepath}");
+		Instance.Logger.LogDebug($"cpackagepath = {cpackagepath}");
 		Lua.DoString(cpackagepath);
 
 		IncludeLuaFile("Lua/includes/luanet.lua");
@@ -225,9 +225,9 @@ end
 
 	public static void ReloadLua()
 	{
-		Instance?.Logger.LogInfo("The lua environment is being reloading");
+		Instance.Logger.LogInfo("The lua environment is being reloading");
 		LoadingLua(true);
-		Instance?.Logger.LogInfo("The lua environment has been reloaded!");
+		Instance.Logger.LogInfo("The lua environment has been reloaded!");
 	}
 
 	public static object[]? IncludeLuaFile(string name, bool isunsafe = false)
@@ -248,7 +248,7 @@ end
 				name = "Lua/" + name;
 		}
 
-		Instance?.Logger.LogDebug($"Loading Lua file: {name}");
+		Instance.Logger.LogDebug($"Loading Lua file: {name}");
 
 		try
 		{
@@ -266,7 +266,7 @@ end
 	{
 		args ??= [];
 
-		Instance?.Logger.LogMessage(MakeString(args));
+		Instance.Logger.LogMessage(MakeString(args));
 	}
 
 	private static string MakeString(object[] args)
@@ -358,11 +358,11 @@ end
 			}
 			catch (Exception e2)
 			{
-				Instance?.Logger.LogError(e2.ToString());
+				Instance.Logger.LogError(e2.ToString());
 			}
 		}
 
-		Instance?.Logger.LogError(e.ToString());
+		Instance.Logger.LogError(e.ToString());
 	}
 
 	public static void LuaError(object e)
@@ -375,11 +375,11 @@ end
 			}
 			catch (Exception e2)
 			{
-				Instance?.Logger.LogError(e2.ToString());
+				Instance.Logger.LogError(e2.ToString());
 			}
 		}
 
-		Instance?.Logger.LogError(e.ToString());
+		Instance.Logger.LogError(e.ToString());
 	}
 
 	// TODO
@@ -387,7 +387,7 @@ end
 	{
 		if (!IsLoadMonoCSharp)
 		{
-			Instance?.Logger.LogWarning("Assembly 'Mono.CSharp.dll' was not loaded");
+			Instance.Logger.LogWarning("Assembly 'Mono.CSharp.dll' was not loaded");
 			return null;
 		}
 
@@ -420,7 +420,7 @@ internal class LoggerTextWriter : TextWriter
 	{
 		if (value == '\n')
 		{
-			LuaLoader.Instance?.Logger.LogWarning(this.sb.ToString());
+			LuaLoader.Instance.Logger.LogWarning(this.sb.ToString());
 			this.sb.Length = 0;
 			return;
 		}

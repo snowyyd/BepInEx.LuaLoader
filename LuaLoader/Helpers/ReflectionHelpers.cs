@@ -143,7 +143,7 @@ public static class ReflectionHelpers
 		}
 		catch (Exception e)
 		{
-			LuaLoader.Instance?.Logger.LogMessage(e.GetType() + ", " + e.Message);
+			LuaLoader.Instance.Logger.LogMessage(e.GetType() + ", " + e.Message);
 		}
 #endif
 		return false;
