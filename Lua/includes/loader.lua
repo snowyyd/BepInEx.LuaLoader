@@ -1,5 +1,5 @@
-import('LuaLoader', 'LuaLoader.LuaClass');
-import('LuaLoader', 'LuaLoader.Helpers');
+import('LuaLoader.Core', 'LuaLoader.LuaClass');
+import('LuaLoader.Core', 'LuaLoader.Helpers');
 
 local Msg = Loader.LogMessage
 local table = table

@@ -5,7 +5,7 @@
     <OutputType>library</OutputType>
     <TargetFramework>netstandard2.1</TargetFramework>
     <!-- <RootNamespace>LuaLoader</RootNamespace> -->
-    <!-- <AssemblyName>LuaLoader</AssemblyName> -->
+    <!-- <AssemblyName>LuaLoader.Core</AssemblyName> -->
     <Configurations>Debug;Release;CPP</Configurations>
 
     <!-- Lang features -->

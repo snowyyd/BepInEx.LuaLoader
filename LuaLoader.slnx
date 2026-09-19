@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="LuaLoader/LuaLoader.csproj" />
+  <Project Path="LuaLoader.Core/LuaLoader.Core.csproj" />
   <Project Path="LuaLoader.BepInEx/LuaLoader.BepInEx.csproj" />
 </Solution>
