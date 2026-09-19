@@ -1,10 +1,5 @@
 # Build results
-bin/
-obj/
-build/
-
-# Secrets
-.env
+artifacts/
 
 # References
 References/

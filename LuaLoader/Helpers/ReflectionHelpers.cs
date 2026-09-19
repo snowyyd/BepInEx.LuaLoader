@@ -116,7 +116,7 @@ public static class ReflectionHelpers
 
 	public static Type[] GetAllBaseTypes(object obj) => GetAllBaseTypes(GetActualType(obj));
 
-	public static Type[] GetAllBaseTypes(Type type)
+	public static Type[] GetAllBaseTypes(Type? type)
 	{
 		var list = new List<Type>();
 
@@ -143,7 +143,7 @@ public static class ReflectionHelpers
 		}
 		catch (Exception e)
 		{
-			LuaLoader.Instance.Logger.LogMessage(e.GetType() + ", " + e.Message);
+			LuaEngine.Logger.LogMessage(e.GetType() + ", " + e.Message);
 		}
 #endif
 		return false;

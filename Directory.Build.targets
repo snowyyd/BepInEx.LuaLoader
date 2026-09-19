@@ -1,0 +1,74 @@
+<Project>
+
+  <Choose>
+    <!-- ================= BepInEx 5 ================= -->
+    <When Condition="$(BepInExVersion.StartsWith('5'))">
+      <PropertyGroup>
+        <_BepInExCoreVersion>$(BepInExVersion)</_BepInExCoreVersion>
+        <_BepInExCoreVersion Condition="'$(BepInExVersion)' == '5'">5.*</_BepInExCoreVersion>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+        <PackageReference Include="BepInEx.Core" Version="$(_BepInExCoreVersion)" />
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+      </ItemGroup>
+
+      <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+      </ItemGroup>
+    </When>
+
+    <!-- ================= BepInEx 6 IL2CPP ================= -->
+    <When Condition="$(BepInExVersion.StartsWith('6')) AND$(BepInExVersion.EndsWith('-il2cpp'))">
+      <PropertyGroup>
+        <_BepInExIL2CPPVersion>$(BepInExVersion.Replace('-il2cpp', ''))</_BepInExIL2CPPVersion>
+        <_BepInExIL2CPPVersion Condition="'$(BepInExVersion)' == '6-il2cpp'">6.0.0-be.*</_BepInExIL2CPPVersion>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="$(_BepInExIL2CPPVersion)" IncludeAssets="compile" />
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+      </ItemGroup>
+    </When>
+
+    <!-- ================= BepInEx 6 Mono ================= -->
+    <When Condition="$(BepInExVersion.StartsWith('6'))">
+      <PropertyGroup>
+        <_BepInExMonoVersion>$(BepInExVersion)</_BepInExMonoVersion>
+        <_BepInExMonoVersion Condition="'$(BepInExVersion)' == '6'">6.0.0-be.*</_BepInExMonoVersion>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+        <PackageReference Include="BepInEx.Unity.Mono" Version="$(_BepInExMonoVersion)" IncludeAssets="compile" />
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+      </ItemGroup>
+
+      <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
+  <!-- ================= Extra Configurations ================= -->
+
+  <ItemGroup Condition="'$(UseAssemblyPublicizer)' != 'false'">
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.5.0-beta.2" PrivateAssets="all" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UnityVersion)' != '' AND '$(UnityVersion)' != 'none'">
+    <PackageReference Include="UnityEngine.Modules" Version="$(UnityVersion)" IncludeAssets="compile" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IncludeLocalReferences)' == 'true'">
+    <LocalReferences Include="$(MSBuildThisFileDirectory)References/*.dll" Exclude="$(MSBuildThisFileDirectory)References/netstandard.dll;$(MSBuildThisFileDirectory)References/System*.dll;$(MSBuildThisFileDirectory)References/mscorlib.dll" />
+    <Reference Include="@(LocalReferences)" Private="false" Publicize="true" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IncludeLocalUnityReferences)' == 'true'">
+    <LocalUnityReferences Include="$(MSBuildThisFileDirectory)References/Unity*.dll" />
+    <Reference Include="@(LocalUnityReferences)" Private="false" Publicize="true" />
+  </ItemGroup>
+
+</Project>

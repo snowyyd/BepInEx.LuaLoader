@@ -36,7 +36,8 @@ public class LuaHarmony
 		// https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.typebuilder?view=net-6.0
 		// https://github.com/pardeike/Harmony/blob/56ac45a7e79bf0575298ab7cbbc20ded5418d796/Harmony/Internal/MethodPatcher.cs
 
-		var methIL = methodBuilder.GetILGenerator();
+		/* var methIL */
+		_ = methodBuilder.GetILGenerator();
 
 		//emitter.Emit(OpCodes.Ldnull)
 		// To retrieve the private instance field, load the instance it

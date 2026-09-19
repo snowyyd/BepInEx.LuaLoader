@@ -11,24 +11,26 @@ public static class Texture2DHelpers
 #if CPP // If Mono
 #else
 	private static bool isNewEncodeMethod;
-	private static MethodInfo EncodeToPNGMethod => m_encodeToPNGMethod ?? GetEncodeToPNGMethod();
-	private static MethodInfo? m_encodeToPNGMethod;
+	private static MethodInfo? EncodeToPNGMethod
+	{
+		get => field ?? GetEncodeToPNGMethod(); set;
+	}
 
 	private static MethodInfo? GetEncodeToPNGMethod()
 	{
 		if (ReflectionHelpers.GetTypeByName("UnityEngine.ImageConversion") is Type imageConversion)
 		{
 			isNewEncodeMethod = true;
-			return m_encodeToPNGMethod = imageConversion.GetMethod("EncodeToPNG", ReflectionHelpers.CommonFlags);
+			return EncodeToPNGMethod = imageConversion.GetMethod("EncodeToPNG", ReflectionHelpers.CommonFlags);
 		}
 
 		var method = typeof(Texture2D).GetMethod("EncodeToPNG", ReflectionHelpers.CommonFlags);
 		if (method != null)
 		{
-			return m_encodeToPNGMethod = method;
+			return EncodeToPNGMethod = method;
 		}
 
-		LuaLoader.Instance.Logger.LogError("Could not get any EncodeToPNG method!");
+		LuaEngine.Logger.LogError("Could not get any EncodeToPNG method!");
 		return null;
 	}
 #endif
@@ -50,50 +52,42 @@ public static class Texture2DHelpers
 		}
 	}
 
-	public static Texture2D Copy(Texture2D orig, Rect rect)
+	public static Texture2D? Copy(Texture2D orig, Rect rect)
 	{
-		Color[] pixels;
+		if (orig is null)
+			throw new ArgumentNullException(nameof(orig), "Original texture cannot be null.");
 
 		if (!orig.IsReadable())
-		{
 			orig = ForceReadTexture(orig);
-		}
 
-		pixels = orig.GetPixels((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
+		Color[] pixels = orig.GetPixels((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
 
 		var _newTex = new Texture2D((int)rect.width, (int)rect.height);
 		_newTex.SetPixels(pixels);
+		_newTex.Apply();
 
 		return _newTex;
 	}
 
-	public static Texture2D? ForceReadTexture(Texture2D tex)
+	public static Texture2D ForceReadTexture(Texture2D tex)
 	{
-		try
-		{
-			var origFilter = tex.filterMode;
-			tex.filterMode = FilterMode.Point;
+		var origFilter = tex.filterMode;
+		tex.filterMode = FilterMode.Point;
 
-			var rt = RenderTexture.GetTemporary(tex.width, tex.height, 0, RenderTextureFormat.ARGB32);
-			rt.filterMode = FilterMode.Point;
-			RenderTexture.active = rt;
-			Graphics.Blit(tex, rt);
+		var rt = RenderTexture.GetTemporary(tex.width, tex.height, 0, RenderTextureFormat.ARGB32);
+		rt.filterMode = FilterMode.Point;
+		RenderTexture.active = rt;
+		Graphics.Blit(tex, rt);
 
-			var _newTex = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, false);
+		var _newTex = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, false);
 
-			_newTex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
-			_newTex.Apply(false, false);
+		_newTex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
+		_newTex.Apply(false, false);
 
-			RenderTexture.active = null;
-			tex.filterMode = origFilter;
+		RenderTexture.active = null;
+		tex.filterMode = origFilter;
 
-			return _newTex;
-		}
-		catch (Exception e)
-		{
-			LuaLoader.Instance.Logger.LogError("Exception on ForceReadTexture: " + e);
-			return default;
-		}
+		return _newTex;
 	}
 
 	public static void SaveTextureAsPNG(Texture2D tex, string dir, string name, bool isDTXnmNormal = false)
@@ -103,14 +97,12 @@ public static class Texture2DHelpers
 			Directory.CreateDirectory(dir);
 		}
 
-		byte[] data;
+		byte[]? data;
 		var savepath = dir + @"\" + name + ".png";
 
 		// Make sure we can EncodeToPNG it.
 		if (tex.format != TextureFormat.ARGB32 || !tex.IsReadable())
-		{
 			tex = ForceReadTexture(tex);
-		}
 
 		if (isDTXnmNormal)
 		{
@@ -122,18 +114,14 @@ public static class Texture2DHelpers
 		data = tex.EncodeToPNG();
 #else
 		data = isNewEncodeMethod
-			? (byte[])EncodeToPNGMethod.Invoke(null, [tex])
-			: (byte[])EncodeToPNGMethod.Invoke(tex, []);
+			? (byte[]?)EncodeToPNGMethod?.Invoke(null, [tex])
+			: (byte[]?)EncodeToPNGMethod?.Invoke(tex, []);
 #endif
 
 		if (data == null || data.Length < 1)
-		{
-			LuaLoader.Instance.Logger.LogWarning("Could not get any data for the texture!");
-		}
+			LuaEngine.Logger.LogWarning("Could not get any data for the texture!");
 		else
-		{
 			File.WriteAllBytes(savepath, data);
-		}
 	}
 
 	// Converts DTXnm-format Normal Map to RGBA-format Normal Map.
@@ -148,8 +136,8 @@ public static class Texture2DHelpers
 			c.r = (c.a * 2) - 1; // red <- alpha
 			c.g = (c.g * 2) - 1; // green is always the same
 
-			var rg = new Vector2(c.r, c.g); //this is the red-green vector
-			c.b = Mathf.Sqrt(1 - Mathf.Clamp01(Vector2.Dot(rg, rg))); //recalculate the blue channel
+			var rg = new Vector2(c.r, c.g); // this is the red-green vector
+			c.b = Mathf.Sqrt(1 - Mathf.Clamp01(Vector2.Dot(rg, rg))); // recalculate the blue channel
 
 			colors[i] = new Color(
 				(c.r * 0.5f) + 0.5f,

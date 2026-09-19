@@ -4,18 +4,14 @@ namespace LuaLoader.Helpers;
 
 public static class UnityHelpers
 {
-	private static Camera? m_mainCamera;
-
-	public static Camera MainCamera
+	public static Camera? MainCamera
 	{
 		get
 		{
-			if (!m_mainCamera)
-			{
-				m_mainCamera = Camera.main;
-			}
+			if (!field)
+				field = Camera.main;
 
-			return m_mainCamera;
+			return field;
 		}
 	}
 

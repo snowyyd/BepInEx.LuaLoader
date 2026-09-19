@@ -12,7 +12,7 @@ public static class NLuaExtensions
 		}
 		catch (Exception e)
 		{
-			LuaLoader.LuaError(e);
+			LuaEngine.LuaError(e);
 		}
 
 		return null;

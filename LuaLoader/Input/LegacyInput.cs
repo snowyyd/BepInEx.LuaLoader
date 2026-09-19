@@ -6,33 +6,31 @@ namespace LuaLoader.Input;
 
 public class LegacyInput : IAbstractInput
 {
-	public static Type TInput => m_tInput ??= ReflectionHelpers.GetTypeByName("UnityEngine.Input");
-	private static Type? m_tInput;
+	public static Type? TInput => field ??= ReflectionHelpers.GetTypeByName("UnityEngine.Input");
 
-	private static PropertyInfo? m_mousePositionProp;
-	private static MethodInfo? m_getKeyMethod;
-	private static MethodInfo? m_getKeyDownMethod;
-	private static MethodInfo? m_getMouseButtonMethod;
-	private static MethodInfo? m_getMouseButtonDownMethod;
+	private static PropertyInfo m_mousePositionProp = null!;
+	private static MethodInfo m_getKeyMethod = null!;
+	private static MethodInfo m_getKeyDownMethod = null!;
+	private static MethodInfo m_getMouseButtonMethod = null!;
+	private static MethodInfo m_getMouseButtonDownMethod = null!;
 
-	public Vector2 MousePosition => (Vector3)m_mousePositionProp.GetValue(null, null);
+	public Vector2 MousePosition => (Vector2)m_mousePositionProp.GetValue(null, null);
 
 	public bool GetKey(KeyCode key) => (bool)m_getKeyMethod.Invoke(null, [key]);
-
 	public bool GetKeyDown(KeyCode key) => (bool)m_getKeyDownMethod.Invoke(null, [key]);
-
 	public bool GetMouseButton(int btn) => (bool)m_getMouseButtonMethod.Invoke(null, [btn]);
-
 	public bool GetMouseButtonDown(int btn) => (bool)m_getMouseButtonDownMethod.Invoke(null, [btn]);
 
 	public void Init()
 	{
-		LuaLoader.Instance.Logger.LogInfo("Initializing Legacy Input support...");
+		LuaEngine.Logger.LogInfo("Initializing Legacy Input support...");
 
-		m_mousePositionProp = TInput.GetProperty("mousePosition");
-		m_getKeyMethod = TInput.GetMethod("GetKey", [typeof(KeyCode)]);
-		m_getKeyDownMethod = TInput.GetMethod("GetKeyDown", [typeof(KeyCode)]);
-		m_getMouseButtonMethod = TInput.GetMethod("GetMouseButton", [typeof(int)]);
-		m_getMouseButtonDownMethod = TInput.GetMethod("GetMouseButtonDown", [typeof(int)]);
+		var input = TInput ?? throw new TypeLoadException("UnityEngine.Input was not found.");
+
+		m_mousePositionProp = input.GetProperty("mousePosition");
+		m_getKeyMethod = input.GetMethod("GetKey", [typeof(KeyCode)]);
+		m_getKeyDownMethod = input.GetMethod("GetKeyDown", [typeof(KeyCode)]);
+		m_getMouseButtonMethod = input.GetMethod("GetMouseButton", [typeof(int)]);
+		m_getMouseButtonDownMethod = input.GetMethod("GetMouseButtonDown", [typeof(int)]);
 	}
 }

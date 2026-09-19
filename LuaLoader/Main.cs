@@ -1,12 +1,9 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using BepInEx;
-using BepInEx.Logging;
 using HarmonyLib;
 using LuaLoader.Helpers;
 using LuaLoader.LuaClass;
-using LuaLoader.UI;
 
 #if CPP
 using UnhollowerRuntimeLib;
@@ -14,98 +11,27 @@ using UnhollowerRuntimeLib;
 
 namespace LuaLoader;
 
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-public class LuaLoader : BaseUnityPlugin
+public static class LuaEngine
 {
 	public static NLua.Lua? Lua;
-	public static LuaLoader Instance { get; private set; } = null!;
 
-	public new ManualLogSource Logger => base.Logger;
-	public Harmony? HarmonyInstance;
-
-	// public static MelonPreferences_ReflectiveCategory Category;
-	// public static bool IsLoadMonoCSharp;
-
-	public LuaLoader()
-	{
-		Instance = this;
-		// Category = MelonPreferences.CreateCategory<Config>(BuildInfo.Name);
-		// Category.SetFilePath("Lua/LuaLoader.cfg");
-
-		// TODO
-		/* var path = Path.Combine(MelonUtils.BaseDirectory, "MelonLoader", "Managed", "Mono.CSharp.dll");
-
-		if (File.Exists(path))
-		{
-			try
-			{
-				Assembly.LoadFrom(path);
-				IsLoadMonoCSharp = true;
-			}
-			catch (Exception e)
-			{
-				Instance.Logger.LogWarning(e);
-			}
-		}
-		else
-		{
-			Instance.Logger.LogWarning("Assembly 'Mono.CSharp.dll' not found");
-		} */
-
-		InputManager.Init();
-		Instance.Logger.LogInfo("Initializing the lua environment...");
-		this.InitializationLua();
-		LoadingLua();
-		Instance.Logger.LogInfo("The lua environment has been initialized!");
-	}
-
-	public void Awake()
-	{
-		this.Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
-
-		this.HarmonyInstance = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
-
-		LuaCall("Awake");
-	}
-
-	public void Start()
-	{
-		ForceUnlockCursor.Init();
-
-		LuaCall("Start");
-	}
-
-	public void Quit() => LuaCall("Quit");
-
-	private void OnDestroy()
-	{
-		LuaCall("OnDestroy");
-		this.Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID}'s OnDestroy() got called!");
-		this.HarmonyInstance?.UnpatchSelf();
-	}
-
-	public void Update()
-	{
-		if (Loader.ShowMouse)
-		{
-			ForceUnlockCursor.Update();
-		}
-
-		LuaCall("Update");
-	}
-
-	public void LateUpdate() => LuaCall("LateUpdate");
-
-	public void FixedUpdate() => LuaCall("FixedUpdate");
-
-	public void OnGUI() => LuaCall("OnGUI");
+	public static ILogSink Logger { get; set; } = NullLogSink.Instance;
+	public static Harmony? HarmonyInstance { get; set; }
 
 	private static readonly string dirpath = Directory.GetCurrentDirectory().Replace("\\", "/", StringComparison.Ordinal);
 	private static readonly string packagepath = "package.path = package.path .. ';" + EscapeLuaString(dirpath) + "/Lua/includes/modules/?.lua;" + EscapeLuaString(dirpath) + "/Lua/includes/modules/?.luac'";
 	private static readonly string cpackagepath = "package.cpath = package.cpath .. ';" + EscapeLuaString(dirpath) + "/Lua/bin/?.dll'";
-	private const string importloader = "import('LuaLoader', 'LuaLoader.LuaClass');import('LuaLoader', 'LuaLoader.Helpers')";
 	private static bool loadingincludes;
 	private static bool luaenvloaded;
+
+	public static void Initialize()
+	{
+		InputManager.Init();
+		Logger.LogInfo("Initializing the lua environment...");
+		InitializationLua();
+		LoadingLua();
+		Logger.LogInfo("The lua environment has been initialized!");
+	}
 
 	public static void LuaCall(string name) => Lua?.GetFunction("hook.Call").TryCall(name);
 
@@ -142,9 +68,9 @@ public class LuaLoader : BaseUnityPlugin
 		}
 	}
 
-	public void InitializationLua()
+	public static void InitializationLua()
 	{
-		Instance.Logger.LogInfo($"dirpath: {dirpath}");
+		Logger.LogInfo($"dirpath: {dirpath}");
 
 		Lua = new NLua.Lua();
 		Lua.State.Encoding = Encoding.UTF8;
@@ -153,38 +79,22 @@ public class LuaLoader : BaseUnityPlugin
 		Lua["CPP"] = true;
 #endif
 
-		Lua.RegisterFunction("include", this.GetType().GetMethod(nameof(IncludeLuaFile)));
+		Lua.RegisterFunction("include", typeof(LuaEngine).GetMethod(nameof(IncludeLuaFile)));
 		Lua.RegisterFunction("typeof", typeof(ReflectionHelpers).GetMethod(nameof(ReflectionHelpers.GetActualType)));
-		Lua.RegisterFunction("ctype", this.GetType().GetMethod(nameof(GetTypeName)));
-		Lua.RegisterFunction("cprint", this.GetType().GetMethod(nameof(LuaCPrint)));
+		Lua.RegisterFunction("ctype", typeof(LuaEngine).GetMethod(nameof(GetTypeName)));
+		Lua.RegisterFunction("cprint", typeof(LuaEngine).GetMethod(nameof(LuaCPrint)));
 
 		// TODO
 		// if (IsLoadMonoCSharp) Lua.RegisterFunction("Evaluator", this.GetType().GetMethod(nameof(CreateEvaluator)));
 
-		Instance.Logger.LogDebug($"packagepath = {packagepath}");
+		Logger.LogDebug($"packagepath = {packagepath}");
 		Lua.DoString(packagepath);
 
-		Instance.Logger.LogDebug($"cpackagepath = {cpackagepath}");
+		Logger.LogDebug($"cpackagepath = {cpackagepath}");
 		Lua.DoString(cpackagepath);
 
 		IncludeLuaFile("Lua/includes/luanet.lua");
-
-		Lua.DoString(importloader);
-
-		Lua.DoString(@"
-local Msg = Loader.LogMessage
-local table = table
-
-function print(...)
-	local r = {}
-
-	for i = 1, select('#', ...) do table.insert(r, tostring(select(i, ...))) end
-
-	if #r == 0 then table.insert(r, 'nil') end
-
-	Msg(table.concat(r, '  '))
-end
-");
+		IncludeLuaFile("Lua/includes/loader.lua");
 
 		loadingincludes = true;
 
@@ -225,9 +135,9 @@ end
 
 	public static void ReloadLua()
 	{
-		Instance.Logger.LogInfo("The lua environment is being reloading");
+		Logger.LogInfo("The lua environment is being reloading");
 		LoadingLua(true);
-		Instance.Logger.LogInfo("The lua environment has been reloaded!");
+		Logger.LogInfo("The lua environment has been reloaded!");
 	}
 
 	public static object[]? IncludeLuaFile(string name, bool isunsafe = false)
@@ -248,7 +158,7 @@ end
 				name = "Lua/" + name;
 		}
 
-		Instance.Logger.LogDebug($"Loading Lua file: {name}");
+		Logger.LogDebug($"Loading Lua file: {name}");
 
 		try
 		{
@@ -266,7 +176,7 @@ end
 	{
 		args ??= [];
 
-		Instance.Logger.LogMessage(MakeString(args));
+		Logger.LogMessage(MakeString(args));
 	}
 
 	private static string MakeString(object[] args)
@@ -358,11 +268,11 @@ end
 			}
 			catch (Exception e2)
 			{
-				Instance.Logger.LogError(e2.ToString());
+				Logger.LogError(e2.ToString());
 			}
 		}
 
-		Instance.Logger.LogError(e.ToString());
+		Logger.LogError(e.ToString());
 	}
 
 	public static void LuaError(object e)
@@ -375,11 +285,11 @@ end
 			}
 			catch (Exception e2)
 			{
-				Instance.Logger.LogError(e2.ToString());
+				Logger.LogError(e2.ToString());
 			}
 		}
 
-		Instance.Logger.LogError(e.ToString());
+		Logger.LogError(e.ToString());
 	}
 
 	// TODO
@@ -420,7 +330,7 @@ internal class LoggerTextWriter : TextWriter
 	{
 		if (value == '\n')
 		{
-			LuaLoader.Instance.Logger.LogWarning(this.sb.ToString());
+			LuaEngine.Logger.LogWarning(this.sb.ToString());
 			this.sb.Length = 0;
 			return;
 		}

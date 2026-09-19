@@ -1,0 +1,24 @@
+<Project Sdk="Snowyyd.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Project -->
+    <OutputType>library</OutputType>
+    <TargetFramework>netstandard2.1</TargetFramework>
+
+    <!-- Plugin properties -->
+    <AssemblyName>LuaLoader.BepInEx</AssemblyName>
+    <Product>LuaLoader.BepInEx</Product>
+    <Version>1.0.0</Version>
+
+    <!-- Lang features -->
+    <LangVersion>latest</LangVersion>
+
+    <BepInExVersion>5</BepInExVersion>
+    <IncludeLocalReferences>true</IncludeLocalReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../LuaLoader/LuaLoader.csproj" />
+  </ItemGroup>
+
+</Project>
